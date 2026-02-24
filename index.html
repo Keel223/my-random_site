@@ -74,18 +74,14 @@
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); color: #fff; } 100% { transform: scale(1); } }
         .winner-anim { animation: pop 0.4s ease-out; }
 
-        /* --- АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ --- */
+        /* АДАПТАЦИЯ */
         @media (max-width: 600px) {
-            .container { padding-right: 40px; }
+            .container { padding-right: 10px; }
         }
 
-        /* --- СТИЛИ ДЛЯ ВАШЕЙ АНАЛИТИКИ --- */
-        .admin-trigger {
-            text-align: center; margin-top: 50px; color: #333; font-size: 10px; cursor: pointer; user-select: none;
-        }
-        .admin-panel {
-            display: none; background: #222; padding: 20px; margin-top: 20px; border-radius: 10px; border: 1px solid #444;
-        }
+        /* АНАЛИТИКА */
+        .admin-trigger { text-align: center; margin-top: 50px; color: #333; font-size: 10px; cursor: pointer; user-select: none; }
+        .admin-panel { display: none; background: #222; padding: 20px; margin-top: 20px; border-radius: 10px; border: 1px solid #444; }
         .admin-panel h3 { color: #03dac6; margin-bottom: 10px; }
         .stat-row { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px solid #333; padding: 5px 0; }
     </style>
@@ -94,36 +90,32 @@
 
     <header>
         <h1>🎲 Randomizer Pro</h1>
-        <!-- Визуальная имитация -->
         <div class="stats-bar">
-            <div class="stat-item">Сейчас онлайн: <span id="online-count">42</span></div>
-            <div class="stat-item">Всего посещений: <span id="total-count">1,204</span></div>
+            <div class="stat-item">Онлайн: <span id="online-count">42</span></div>
+            <div class="stat-item">Всего: <span id="total-count">1,204</span></div>
         </div>
     </header>
 
-    <!-- РЕКЛАМА A-ADS (ИСПРАВЛЕННЫЙ РАЗМЕР) -->
+    <!-- РЕКЛАМА A-ADS (ИСПРАВЛЕНА: ФИКСИРОВАННЫЙ РАЗМЕР СПРАВА) -->
     <!-- BEGIN AADS AD UNIT 2428588 -->
-    <div style="position: absolute; z-index: 99999">
-          <input autocomplete="off" type="checkbox" id="aadsstickymm0mczim" hidden />
-          <div style="padding-top: 0; padding-bottom: 0;">
-            <!-- Изменено: width:15% -> width:160px (фикс минимальной ширины) и добавлен min-width -->
-            <div style="width:160px; height:100%; position:fixed; text-align:center; font-size:0; top:50%; transform:translateY(-50%); right:0; min-width:160px; z-index: 99999;">
-              <label for="aadsstickymm0mczim" style="bottom: 24px; margin:0 auto; right:0; left:0; max-width:24px; position: absolute; border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px; z-index: 100000; cursor:pointer;">
-                <svg fill="#000000" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490">
-                  <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/>
-                </svg>
-              </label>
-              <!-- Изменено: Убрана фиксированная высота у iframe, задаем 100% от родителя -->
-              <div id="frame" style="width: 100%; height: 100%; margin: auto; position: relative; z-index: 99998; display: flex; flex-direction: column; justify-content: center;">
-                  <iframe data-aa=2428588 src=//acceptable.a-ads.com/2428588/?size=Adaptive style='border:0; padding:0; width:100%; height:100%; overflow:hidden; margin: 0 auto; min-height: 250px;'></iframe>
-              </div>
+    <div style="position: absolute; z-index: 99999; top: 0; right: 0;">
+        <input autocomplete="off" type="checkbox" id="aadsstickymm0mczim" hidden />
+        <div style="padding-top: 0; padding-bottom: 0;">
+            <!-- Контейнер с ЖЕСТКИМИ размерами 160x600 -->
+            <div style="width: 160px; height: 600px; position: fixed; top: 50%; transform: translateY(-50%); right: 0; background: #000;">
+                
+                <!-- Кнопка закрытия -->
+                <label for="aadsstickymm0mczim" style="position: absolute; top: 10px; left: 10px; width: 24px; height: 24px; background: #ccc; border-radius: 4px; z-index: 100000; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold;">✕</label>
+                
+                <!-- Iframe с такими же размерами -->
+                <iframe data-aa=2428588 src=//acceptable.a-ads.com/2428588/?size=160x600 style='border:0; padding:0; width: 160px; height: 600px; overflow:hidden; margin:0;' frameborder="0"></iframe>
+
             </div>
             <style>
-          #aadsstickymm0mczim:checked + div {
-            display: none;
-          }
-        </style>
-        </div></div>
+                #aadsstickymm0mczim:checked + div { display: none; }
+            </style>
+        </div>
+    </div>
     <!-- END AADS AD UNIT 2428588 -->
 
 
@@ -138,35 +130,26 @@
 
         <!-- ПАНЕЛЬ: ЧИСЛО -->
         <div id="panel-number" class="control-panel active">
-            <div class="input-group">
-                <label>От (минимум)</label>
-                <input type="number" id="num-min" value="1">
-            </div>
-            <div class="input-group">
-                <label>До (максимум)</label>
-                <input type="number" id="num-max" value="100">
-            </div>
+            <div class="input-group"><label>От (мин)</label><input type="number" id="num-min" value="1"></div>
+            <div class="input-group"><label>До (макс)</label><input type="number" id="num-max" value="100"></div>
             <button class="action-btn" id="btn-number" onclick="startRoulette('number')">Сгенерировать</button>
         </div>
 
         <!-- ПАНЕЛЬ: КУБИК -->
         <div id="panel-dice" class="control-panel">
-            <p style="text-align:center; margin-bottom:15px; color:#aaa;">Бросаем стандартный 6-гранный кубик</p>
-            <button class="action-btn" id="btn-dice" onclick="startRoulette('dice')">Бросить кубик</button>
+            <p style="text-align:center; margin-bottom:15px; color:#aaa;">Бросок кубика</p>
+            <button class="action-btn" id="btn-dice" onclick="startRoulette('dice')">Бросить</button>
         </div>
 
         <!-- ПАНЕЛЬ: МОНЕТКА -->
         <div id="panel-coin" class="control-panel">
-            <p style="text-align:center; margin-bottom:15px; color:#aaa;">Орёл или решка?</p>
+            <p style="text-align:center; margin-bottom:15px; color:#aaa;">Монетка</p>
             <button class="action-btn" id="btn-coin" onclick="startRoulette('coin')">Подбросить</button>
         </div>
 
         <!-- ПАНЕЛЬ: СПИСОК -->
         <div id="panel-list" class="control-panel">
-            <div class="input-group">
-                <label>Введите варианты (каждый с новой строки):</label>
-                <textarea id="list-items" rows="5" placeholder="Пицца&#10;Суши&#10;Бургер"></textarea>
-            </div>
+            <div class="input-group"><label>Варианты (по одному в строке):</label><textarea id="list-items" rows="5" placeholder="Пицца&#10;Суши&#10;Бургер"></textarea></div>
             <button class="action-btn" id="btn-list" onclick="startRoulette('list')">Выбрать</button>
         </div>
 
@@ -177,203 +160,80 @@
         </div>
 
         <!-- ТРИГГЕР АНАЛИТИКИ -->
-        <div class="admin-trigger" onclick="toggleAdminPanel()">
-            Статистика
-        </div>
-
-        <!-- ПАНЕЛЬ ВАШЕЙ АНАЛИТИКИ -->
+        <div class="admin-trigger" onclick="toggleAdminPanel()">Статистика</div>
         <div id="adminPanel" class="admin-panel">
-            <h3>📊 Личная Аналитика (Local)</h3>
-            <div class="stat-row">
-                <span>Всего посещений (всего):</span>
-                <strong id="real-total">0</strong>
-            </div>
-            <div class="stat-row">
-                <span>Посещений сегодня:</span>
-                <strong id="real-today">0</strong>
-            </div>
-            <div style="margin-top:10px; font-size: 0.8rem; color: #666;">
-                *Данные сохраняются в браузере пользователя.
-            </div>
-            <button onclick="resetStats()" style="margin-top:10px; padding: 5px 10px; background: #ef4444; color: white; border:none; border-radius: 4px; cursor: pointer;">Сбросить</button>
+            <h3>📊 Аналитика</h3>
+            <div class="stat-row"><span>Всего:</span><strong id="real-total">0</strong></div>
+            <div class="stat-row"><span>Сегодня:</span><strong id="real-today">0</strong></div>
+            <button onclick="resetStats()" style="margin-top:10px; padding: 5px 10px; background: #ef4444; color: white; border:none; border-radius: 4px; cursor: pointer;">Сброс</button>
         </div>
     </div>
 
     <script>
-        // --- ВАША ЛИЧНАЯ АНАЛИТИКА ---
+        // --- АНАЛИТИКА ---
         const todayStr = new Date().toLocaleDateString();
-        let stats = JSON.parse(localStorage.getItem('mySiteStats')) || {
-            totalVisits: 0,
-            lastDate: todayStr,
-            todayVisits: 0
-        };
-
-        if (stats.lastDate !== todayStr) {
-            stats.lastDate = todayStr;
-            stats.todayVisits = 0;
-        }
-
-        stats.totalVisits++;
-        stats.todayVisits++;
-
+        let stats = JSON.parse(localStorage.getItem('mySiteStats')) || { totalVisits: 0, lastDate: todayStr, todayVisits: 0 };
+        if (stats.lastDate !== todayStr) { stats.lastDate = todayStr; stats.todayVisits = 0; }
+        stats.totalVisits++; stats.todayVisits++;
         localStorage.setItem('mySiteStats', JSON.stringify(stats));
-
         document.getElementById('real-total').innerText = stats.totalVisits;
         document.getElementById('real-today').innerText = stats.todayVisits;
-
         function toggleAdminPanel() {
-            const panel = document.getElementById('adminPanel');
-            if (panel.style.display === 'block') {
-                panel.style.display = 'none';
-            } else {
-                panel.style.display = 'block';
-            }
+            const p = document.getElementById('adminPanel'); p.style.display = p.style.display === 'block' ? 'none' : 'block';
         }
+        function resetStats() { if(confirm('Сбросить?')) { localStorage.removeItem('mySiteStats'); location.reload(); } }
 
-        function resetStats() {
-            if(confirm('Сбросить статистику?')) {
-                localStorage.removeItem('mySiteStats');
-                location.reload();
-            }
-        }
-
-        // --- ЛОГИКА ИМИТАЦИИ ---
+        // --- ИМИТАЦИЯ ---
         let onlineUsers = Math.floor(Math.random() * 20) + 10;
-        
         setInterval(() => {
-            let change = Math.floor(Math.random() * 3) - 1; 
-            onlineUsers += change;
+            let change = Math.floor(Math.random() * 3) - 1; onlineUsers += change;
             if(onlineUsers < 5) onlineUsers = 5;
             document.getElementById('online-count').innerText = onlineUsers;
         }, 3000);
+        document.getElementById('total-count').innerText = stats.totalVisits + 1000;
 
-        document.getElementById('total-count').innerText = stats.totalVisits + 1000; 
-
-        // --- ОСНОВНАЯ ЛОГИКА РАНДОМАЙЗЕРА ---
-        let currentMode = 'number';
-        let isSpinning = false;
-
-        function setMode(mode) {
-            if(isSpinning) return;
-            currentMode = mode;
+        // --- РАНДОМАЙЗЕР ---
+        let currentMode = 'number', isSpinning = false;
+        function setMode(m) {
+            if(isSpinning) return; currentMode = m;
             document.querySelectorAll('.control-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('panel-' + mode).classList.add('active');
-            
-            const btns = document.querySelectorAll('.mode-btn');
-            if(mode === 'number') btns[0].classList.add('active');
-            if(mode === 'dice') btns[1].classList.add('active');
-            if(mode === 'coin') btns[2].classList.add('active');
-            if(mode === 'list') btns[3].classList.add('active');
-
+            document.getElementById('panel-'+m).classList.add('active');
+            const b = document.querySelectorAll('.mode-btn'); 
+            if(m=='number')b[0].classList.add('active');if(m=='dice')b[1].classList.add('active');if(m=='coin')b[2].classList.add('active');if(m=='list')b[3].classList.add('active');
             resetDisplay();
         }
-
-        function resetDisplay() {
-            document.getElementById('main-result').innerText = "?";
-            document.getElementById('main-result').className = "big-number";
-            document.getElementById('sub-result').innerText = "Нажмите кнопку";
+        function resetDisplay() { document.getElementById('main-result').innerText = "?"; document.getElementById('main-result').className = "big-number"; document.getElementById('sub-result').innerText = "Нажмите кнопку"; }
+        function startRoulette(t) {
+            if(isSpinning)return;
+            if(t=='number'){const min=parseInt(document.getElementById('num-min').value),max=parseInt(document.getElementById('num-max').value);if(min>=max){alert("Ошибка!");return;}}
+            if(t=='list'){const items=document.getElementById('list-items').value.split('\n').filter(i=>i.trim()!=="");if(items.length<2){alert("Мало вариантов!");return;}}
+            isSpinning=true; toggleButtons(true);
+            const mainD=document.getElementById('main-result'); let duration=2000, intTime=50, time=0;
+            mainD.classList.add('blur-anim');
+            const timer=setInterval(()=>{
+                time+=intTime; updateDisplay(getFake(t),t);
+                if(time>duration*0.7)intTime+=20;
+                if(time>=duration){clearInterval(timer);finish(t);}
+            },intTime);
         }
-
-        function startRoulette(type) {
-            if (isSpinning) return;
-            
-            if (type === 'number') {
-                const min = parseInt(document.getElementById('num-min').value);
-                const max = parseInt(document.getElementById('num-max').value);
-                if (min >= max) { alert("Минимум должен быть меньше максимума!"); return; }
-            }
-            if (type === 'list') {
-                const items = document.getElementById('list-items').value.split('\n').filter(i => i.trim() !== "");
-                if (items.length < 2) { alert("Нужно минимум 2 варианта!"); return; }
-            }
-
-            isSpinning = true;
-            toggleButtons(true);
-            
-            const mainDisplay = document.getElementById('main-result');
-            const subDisplay = document.getElementById('sub-result');
-            
-            let duration = 2000;
-            let intervalTime = 50;
-            let elapsedTime = 0;
-            
-            mainDisplay.classList.add('blur-anim');
-
-            const timer = setInterval(() => {
-                elapsedTime += intervalTime;
-                const tempValue = getFakeValue(type);
-                updateDisplay(tempValue, type);
-
-                if (elapsedTime > duration * 0.7) {
-                    intervalTime += 20;
-                }
-
-                if (elapsedTime >= duration) {
-                    clearInterval(timer);
-                    finishRoulette(type);
-                }
-            }, intervalTime);
-        }
-
-        function getFakeValue(type) {
-            if (type === 'number') {
-                const min = parseInt(document.getElementById('num-min').value);
-                const max = parseInt(document.getElementById('num-max').value);
-                return Math.floor(Math.random() * (max - min + 1)) + min;
-            }
-            if (type === 'dice') {
-                const dice = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
-                return dice[Math.floor(Math.random() * dice.length)];
-            }
-            if (type === 'coin') {
-                return Math.random() < 0.5 ? "Орёл" : "Решка";
-            }
-            if (type === 'list') {
-                const items = document.getElementById('list-items').value.split('\n').filter(i => i.trim() !== "");
-                return items[Math.floor(Math.random() * items.length)];
-            }
+        function getFake(t){
+            if(t=='number'){const min=parseInt(document.getElementById('num-min').value),max=parseInt(document.getElementById('num-max').value);return Math.floor(Math.random()*(max-min+1))+min;}
+            if(t=='dice'){const d=['⚀','⚁','⚂','⚃','⚄','⚅'];return d[Math.floor(Math.random()*d.length)];}
+            if(t=='coin')return Math.random()<0.5?"Орёл":"Решка";
+            if(t=='list'){const i=document.getElementById('list-items').value.split('\n').filter(x=>x.trim()!=="");return i[Math.floor(Math.random()*i.length)];}
             return "?";
         }
-
-        function updateDisplay(value, type) {
-            const el = document.getElementById('main-result');
-            if (type === 'number' || type === 'coin') {
-                el.innerText = value;
-            } else if (type === 'dice' || type === 'list') {
-                el.innerText = value;
-            }
+        function updateDisplay(v,t){document.getElementById('main-result').innerText=v;}
+        function finish(t){
+            const el=document.getElementById('main-result'), sub=document.getElementById('sub-result');
+            el.classList.remove('blur-anim'); el.classList.remove('big-number'); void el.offsetWidth; el.classList.add('big-number','winner-anim');
+            el.innerText=getFake(t);
+            if(t=='dice'){const m={'⚀':1,'⚁':2,'⚂':3,'⚃':4,'⚄':5,'⚅':6};sub.innerText=`Выпало: ${m[el.innerText]}`;}
+            else sub.innerText="Результат";
+            isSpinning=false; toggleButtons(false);
         }
-
-        function finishRoulette(type) {
-            const el = document.getElementById('main-result');
-            const sub = document.getElementById('sub-result');
-            
-            let finalVal = getFakeValue(type);
-            
-            el.classList.remove('blur-anim');
-            el.classList.remove('big-number'); 
-            void el.offsetWidth; 
-            el.classList.add('big-number', 'winner-anim');
-            
-            el.innerText = finalVal;
-            
-            if (type === 'dice') {
-                const map = {'⚀':1, '⚁':2, '⚂':3, '⚃':4, '⚄':5, '⚅':6};
-                sub.innerText = `Выпало: ${map[finalVal]}`;
-            } else {
-                sub.innerText = "Результат";
-            }
-
-            isSpinning = false;
-            toggleButtons(false);
-        }
-
-        function toggleButtons(disabled) {
-            const btnId = 'btn-' + currentMode;
-            const btn = document.getElementById(btnId);
-            if(btn) btn.disabled = disabled;
-        }
+        function toggleButtons(d){const b=document.getElementById('btn-'+currentMode);if(b)b.disabled=d;}
     </script>
 </body>
-    </html>
+</html>
