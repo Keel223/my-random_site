@@ -79,7 +79,7 @@
             .container { padding-right: 40px; }
         }
 
-        /* --- СТИЛИ ДЛЯ ВАШЕЙ АНАЛИТИКИ (Скрытая панель) --- */
+        /* --- СТИЛИ ДЛЯ ВАШЕЙ АНАЛИТИКИ --- */
         .admin-trigger {
             text-align: center; margin-top: 50px; color: #333; font-size: 10px; cursor: pointer; user-select: none;
         }
@@ -94,27 +94,29 @@
 
     <header>
         <h1>🎲 Randomizer Pro</h1>
-        <!-- Визуальная имитация (показывается пользователям) -->
+        <!-- Визуальная имитация -->
         <div class="stats-bar">
             <div class="stat-item">Сейчас онлайн: <span id="online-count">42</span></div>
             <div class="stat-item">Всего посещений: <span id="total-count">1,204</span></div>
         </div>
     </header>
 
-    <!-- РЕКЛАМА A-ADS -->
+    <!-- РЕКЛАМА A-ADS (ИСПРАВЛЕННЫЙ РАЗМЕР) -->
     <!-- BEGIN AADS AD UNIT 2428588 -->
     <div style="position: absolute; z-index: 99999">
           <input autocomplete="off" type="checkbox" id="aadsstickymm0mczim" hidden />
           <div style="padding-top: 0; padding-bottom: 0;">
-            <div style="width:15%;height:100%;position:fixed;text-align:center;font-size:0;top:50%;transform:translateY(-50%);right:0;min-width:100px">
-              <label for="aadsstickymm0mczim" style="bottom: 24px;margin:0 auto;right:0;left:0;max-width:24px; position: absolute;border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px;z-index: 99999;cursor:pointer">
+            <!-- Изменено: width:15% -> width:160px (фикс минимальной ширины) и добавлен min-width -->
+            <div style="width:160px; height:100%; position:fixed; text-align:center; font-size:0; top:50%; transform:translateY(-50%); right:0; min-width:160px; z-index: 99999;">
+              <label for="aadsstickymm0mczim" style="bottom: 24px; margin:0 auto; right:0; left:0; max-width:24px; position: absolute; border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px; z-index: 100000; cursor:pointer;">
                 <svg fill="#000000" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490">
                   <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/>
                 </svg>
               </label>
-              <div id="frame" style="width: 100%;margin: auto;position: relative; z-index: 99998;height:100%; display: flex;flex-direction: column; justify-content: center">
-                            <iframe data-aa=2428588 src=//acceptable.a-ads.com/2428588/?size=Adaptive style='border:0; padding:0; width:70%; height:70%; overflow:hidden; margin: 0 auto'></iframe>
-                        </div>
+              <!-- Изменено: Убрана фиксированная высота у iframe, задаем 100% от родителя -->
+              <div id="frame" style="width: 100%; height: 100%; margin: auto; position: relative; z-index: 99998; display: flex; flex-direction: column; justify-content: center;">
+                  <iframe data-aa=2428588 src=//acceptable.a-ads.com/2428588/?size=Adaptive style='border:0; padding:0; width:100%; height:100%; overflow:hidden; margin: 0 auto; min-height: 250px;'></iframe>
+              </div>
             </div>
             <style>
           #aadsstickymm0mczim:checked + div {
@@ -198,9 +200,7 @@
     </div>
 
     <script>
-        // --- ВАША ЛИЧНАЯ АНАЛИТИКА (БЕЗ СЕРВЕРА) ---
-        
-        // 1. Получаем данные из памяти браузера или создаем новые
+        // --- ВАША ЛИЧНАЯ АНАЛИТИКА ---
         const todayStr = new Date().toLocaleDateString();
         let stats = JSON.parse(localStorage.getItem('mySiteStats')) || {
             totalVisits: 0,
@@ -208,24 +208,19 @@
             todayVisits: 0
         };
 
-        // 2. Проверяем, новый ли день
         if (stats.lastDate !== todayStr) {
             stats.lastDate = todayStr;
             stats.todayVisits = 0;
         }
 
-        // 3. Увеличиваем счетчики
         stats.totalVisits++;
         stats.todayVisits++;
 
-        // 4. Сохраняем обратно
         localStorage.setItem('mySiteStats', JSON.stringify(stats));
 
-        // 5. Показываем в админке
         document.getElementById('real-total').innerText = stats.totalVisits;
         document.getElementById('real-today').innerText = stats.todayVisits;
 
-        // Функция открытия панели
         function toggleAdminPanel() {
             const panel = document.getElementById('adminPanel');
             if (panel.style.display === 'block') {
@@ -235,7 +230,6 @@
             }
         }
 
-        // Функция сброса
         function resetStats() {
             if(confirm('Сбросить статистику?')) {
                 localStorage.removeItem('mySiteStats');
@@ -243,11 +237,9 @@
             }
         }
 
-
-        // --- ЛОГИКА ИМИТАЦИИ (ДЛЯ ПОКАЗА ВСЕМ) ---
+        // --- ЛОГИКА ИМИТАЦИИ ---
         let onlineUsers = Math.floor(Math.random() * 20) + 10;
         
-        // Показываем красивые (фейковые) числа всем
         setInterval(() => {
             let change = Math.floor(Math.random() * 3) - 1; 
             onlineUsers += change;
@@ -255,8 +247,7 @@
             document.getElementById('online-count').innerText = onlineUsers;
         }, 3000);
 
-        document.getElementById('total-count').innerText = stats.totalVisits + 1000; // Прибавим немного для красоты
-
+        document.getElementById('total-count').innerText = stats.totalVisits + 1000; 
 
         // --- ОСНОВНАЯ ЛОГИКА РАНДОМАЙЗЕРА ---
         let currentMode = 'number';
@@ -385,4 +376,4 @@
         }
     </script>
 </body>
-                </html>
+    </html>
