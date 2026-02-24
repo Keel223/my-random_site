@@ -3,19 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Randomizer with Animation</title>
+    <title>Ultimate Randomizer Pro</title>
+
     <style>
-        /* --- СТИЛИ --- */
+        /* --- ОСНОВНЫЕ СТИЛИ --- */
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #121212; color: #e0e0e0; display: flex; flex-direction: column; min-height: 100vh; }
+        body { background-color: #121212; color: #e0e0e0; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
         
         header {
-            background: #1f1f1f; padding: 20px; text-align: center; border-bottom: 2px solid #333;
+            background: #1f1f1f; padding: 15px 20px; text-align: center; border-bottom: 2px solid #333; position: relative; z-index: 10;
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
         }
-        h1 { color: #bb86fc; }
+        h1 { color: #bb86fc; font-size: 1.5rem; margin: 0; }
+
+        /* Стили для счетчиков */
+        .stats-bar {
+            display: flex; gap: 20px; font-size: 0.85rem; color: #888;
+            background: rgba(255, 255, 255, 0.05); padding: 5px 15px; border-radius: 20px;
+        }
+        .stat-item span { color: #fff; font-weight: bold; margin-left: 5px; }
 
         .container {
-            max-width: 600px; margin: 30px auto; padding: 20px; flex: 1;
+            max-width: 600px; margin: 30px auto; padding: 20px; flex: 1; position: relative; z-index: 5;
         }
 
         /* Меню режимов */
@@ -59,20 +68,62 @@
         .sub-text { color: #666; margin-top: 10px; }
         .emoji-result { font-size: 6rem; display: block; transition: transform 0.1s; }
 
-        /* Эффект размытия при быстрой смене */
+        /* Анимации */
         .blur-anim { filter: blur(2px); }
-
         @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); color: #fff; } 100% { transform: scale(1); } }
-
         .winner-anim { animation: pop 0.4s ease-out; }
+
+        /* --- АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ --- */
+        @media (max-width: 600px) {
+            .container { padding-right: 40px; }
+        }
+
+        /* --- СТИЛИ ДЛЯ ВАШЕЙ АНАЛИТИКИ (Скрытая панель) --- */
+        .admin-trigger {
+            text-align: center; margin-top: 50px; color: #333; font-size: 10px; cursor: pointer; user-select: none;
+        }
+        .admin-panel {
+            display: none; background: #222; padding: 20px; margin-top: 20px; border-radius: 10px; border: 1px solid #444;
+        }
+        .admin-panel h3 { color: #03dac6; margin-bottom: 10px; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 5px; border-bottom: 1px solid #333; padding: 5px 0; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>🎲 Randomizer Pro</h1>
+        <!-- Визуальная имитация (показывается пользователям) -->
+        <div class="stats-bar">
+            <div class="stat-item">Сейчас онлайн: <span id="online-count">42</span></div>
+            <div class="stat-item">Всего посещений: <span id="total-count">1,204</span></div>
+        </div>
     </header>
+
+    <!-- РЕКЛАМА A-ADS -->
+    <!-- BEGIN AADS AD UNIT 2428588 -->
+    <div style="position: absolute; z-index: 99999">
+          <input autocomplete="off" type="checkbox" id="aadsstickymm0mczim" hidden />
+          <div style="padding-top: 0; padding-bottom: 0;">
+            <div style="width:15%;height:100%;position:fixed;text-align:center;font-size:0;top:50%;transform:translateY(-50%);right:0;min-width:100px">
+              <label for="aadsstickymm0mczim" style="bottom: 24px;margin:0 auto;right:0;left:0;max-width:24px; position: absolute;border-radius: 4px; background: rgba(248, 248, 249, 0.70); padding: 4px;z-index: 99999;cursor:pointer">
+                <svg fill="#000000" height="16px" width="16px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 490 490">
+                  <polygon points="456.851,0 245,212.564 33.149,0 0.708,32.337 212.669,245.004 0.708,457.678 33.149,490 245,277.443 456.851,490 489.292,457.678 277.331,245.004 489.292,32.337 "/>
+                </svg>
+              </label>
+              <div id="frame" style="width: 100%;margin: auto;position: relative; z-index: 99998;height:100%; display: flex;flex-direction: column; justify-content: center">
+                            <iframe data-aa=2428588 src=//acceptable.a-ads.com/2428588/?size=Adaptive style='border:0; padding:0; width:70%; height:70%; overflow:hidden; margin: 0 auto'></iframe>
+                        </div>
+            </div>
+            <style>
+          #aadsstickymm0mczim:checked + div {
+            display: none;
+          }
+        </style>
+        </div></div>
+    <!-- END AADS AD UNIT 2428588 -->
+
 
     <div class="container">
         <!-- ВЫБОР РЕЖИМА -->
@@ -122,16 +173,97 @@
             <div id="main-result" class="big-number">?</div>
             <div id="sub-result" class="sub-text">Нажмите кнопку</div>
         </div>
+
+        <!-- ТРИГГЕР АНАЛИТИКИ -->
+        <div class="admin-trigger" onclick="toggleAdminPanel()">
+            Статистика
+        </div>
+
+        <!-- ПАНЕЛЬ ВАШЕЙ АНАЛИТИКИ -->
+        <div id="adminPanel" class="admin-panel">
+            <h3>📊 Личная Аналитика (Local)</h3>
+            <div class="stat-row">
+                <span>Всего посещений (всего):</span>
+                <strong id="real-total">0</strong>
+            </div>
+            <div class="stat-row">
+                <span>Посещений сегодня:</span>
+                <strong id="real-today">0</strong>
+            </div>
+            <div style="margin-top:10px; font-size: 0.8rem; color: #666;">
+                *Данные сохраняются в браузере пользователя.
+            </div>
+            <button onclick="resetStats()" style="margin-top:10px; padding: 5px 10px; background: #ef4444; color: white; border:none; border-radius: 4px; cursor: pointer;">Сбросить</button>
+        </div>
     </div>
 
     <script>
+        // --- ВАША ЛИЧНАЯ АНАЛИТИКА (БЕЗ СЕРВЕРА) ---
+        
+        // 1. Получаем данные из памяти браузера или создаем новые
+        const todayStr = new Date().toLocaleDateString();
+        let stats = JSON.parse(localStorage.getItem('mySiteStats')) || {
+            totalVisits: 0,
+            lastDate: todayStr,
+            todayVisits: 0
+        };
+
+        // 2. Проверяем, новый ли день
+        if (stats.lastDate !== todayStr) {
+            stats.lastDate = todayStr;
+            stats.todayVisits = 0;
+        }
+
+        // 3. Увеличиваем счетчики
+        stats.totalVisits++;
+        stats.todayVisits++;
+
+        // 4. Сохраняем обратно
+        localStorage.setItem('mySiteStats', JSON.stringify(stats));
+
+        // 5. Показываем в админке
+        document.getElementById('real-total').innerText = stats.totalVisits;
+        document.getElementById('real-today').innerText = stats.todayVisits;
+
+        // Функция открытия панели
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            if (panel.style.display === 'block') {
+                panel.style.display = 'none';
+            } else {
+                panel.style.display = 'block';
+            }
+        }
+
+        // Функция сброса
+        function resetStats() {
+            if(confirm('Сбросить статистику?')) {
+                localStorage.removeItem('mySiteStats');
+                location.reload();
+            }
+        }
+
+
+        // --- ЛОГИКА ИМИТАЦИИ (ДЛЯ ПОКАЗА ВСЕМ) ---
+        let onlineUsers = Math.floor(Math.random() * 20) + 10;
+        
+        // Показываем красивые (фейковые) числа всем
+        setInterval(() => {
+            let change = Math.floor(Math.random() * 3) - 1; 
+            onlineUsers += change;
+            if(onlineUsers < 5) onlineUsers = 5;
+            document.getElementById('online-count').innerText = onlineUsers;
+        }, 3000);
+
+        document.getElementById('total-count').innerText = stats.totalVisits + 1000; // Прибавим немного для красоты
+
+
+        // --- ОСНОВНАЯ ЛОГИКА РАНДОМАЙЗЕРА ---
         let currentMode = 'number';
-        let isSpinning = false; // Блокировка кнопки во время анимации
+        let isSpinning = false;
 
-        // Переключение вкладок
         function setMode(mode) {
-            if(isSpinning) return; // Нельзя переключать во время прокрутки
-
+            if(isSpinning) return;
             currentMode = mode;
             document.querySelectorAll('.control-panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -148,15 +280,13 @@
 
         function resetDisplay() {
             document.getElementById('main-result').innerText = "?";
-            document.getElementById('main-result').className = "big-number"; // Сброс анимаций
+            document.getElementById('main-result').className = "big-number";
             document.getElementById('sub-result').innerText = "Нажмите кнопку";
         }
 
-        // --- ГЛАВНАЯ ФУНКЦИЯ ЗАПУСКА РУЛЕТКИ ---
         function startRoulette(type) {
             if (isSpinning) return;
             
-            // Валидация
             if (type === 'number') {
                 const min = parseInt(document.getElementById('num-min').value);
                 const max = parseInt(document.getElementById('num-max').value);
@@ -168,33 +298,26 @@
             }
 
             isSpinning = true;
-            toggleButtons(true); // Блокируем кнопки
+            toggleButtons(true);
             
             const mainDisplay = document.getElementById('main-result');
             const subDisplay = document.getElementById('sub-result');
             
-            // Настройка параметров анимации
-            let duration = 2000; // Общее время работы (мс)
-            let intervalTime = 50; // Сначала быстро (50мс)
+            let duration = 2000;
+            let intervalTime = 50;
             let elapsedTime = 0;
             
-            // Эффект размытия
             mainDisplay.classList.add('blur-anim');
 
-            // Таймер анимации
             const timer = setInterval(() => {
                 elapsedTime += intervalTime;
-                
-                // Генерируем промежуточный случайный результат
                 const tempValue = getFakeValue(type);
                 updateDisplay(tempValue, type);
 
-                // Замедляем в конце
                 if (elapsedTime > duration * 0.7) {
-                    intervalTime += 20; // Увеличиваем задержку (замедляем)
+                    intervalTime += 20;
                 }
 
-                // Остановка
                 if (elapsedTime >= duration) {
                     clearInterval(timer);
                     finishRoulette(type);
@@ -202,7 +325,6 @@
             }, intervalTime);
         }
 
-        // Получить случайное значение ТЕКУЩЕЕ (для анимации)
         function getFakeValue(type) {
             if (type === 'number') {
                 const min = parseInt(document.getElementById('num-min').value);
@@ -223,37 +345,29 @@
             return "?";
         }
 
-        // Обновление экрана
         function updateDisplay(value, type) {
             const el = document.getElementById('main-result');
             if (type === 'number' || type === 'coin') {
                 el.innerText = value;
             } else if (type === 'dice' || type === 'list') {
-                // Для эмодзи и текста списка просто выводим
                 el.innerText = value;
             }
         }
 
-        // ФИНИШ: Показываем реальный результат
         function finishRoulette(type) {
             const el = document.getElementById('main-result');
             const sub = document.getElementById('sub-result');
             
-            // Финальный расчет
-            let finalVal = getFakeValue(type); // Функция та же, просто последний вызов
+            let finalVal = getFakeValue(type);
             
-            // Убираем размытие
             el.classList.remove('blur-anim');
-            
-            // Добавляем класс анимации победы
-            el.classList.remove('big-number'); // сброс
-            void el.offsetWidth; // trigger reflow
+            el.classList.remove('big-number'); 
+            void el.offsetWidth; 
             el.classList.add('big-number', 'winner-anim');
             
             el.innerText = finalVal;
             
             if (type === 'dice') {
-                // Дополнительно покажем число для кубика
                 const map = {'⚀':1, '⚁':2, '⚂':3, '⚃':4, '⚄':5, '⚅':6};
                 sub.innerText = `Выпало: ${map[finalVal]}`;
             } else {
@@ -264,13 +378,11 @@
             toggleButtons(false);
         }
 
-        // Блокировка/Разблокировка кнопок
         function toggleButtons(disabled) {
             const btnId = 'btn-' + currentMode;
             const btn = document.getElementById(btnId);
             if(btn) btn.disabled = disabled;
         }
-
     </script>
 </body>
-</html>
+                </html>
