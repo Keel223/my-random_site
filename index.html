@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Randomizer with Animation</title>
+    <style>
+        /* --- СТИЛИ --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #121212; color: #e0e0e0; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header {
+            background: #1f1f1f; padding: 20px; text-align: center; border-bottom: 2px solid #333;
+        }
+        h1 { color: #bb86fc; }
+
+        .container {
+            max-width: 600px; margin: 30px auto; padding: 20px; flex: 1;
+        }
+
+        /* Меню режимов */
+        .modes { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .mode-btn {
+            background: #2c2c2c; color: #aaa; border: 1px solid #444; padding: 10px 15px;
+            cursor: pointer; border-radius: 8px; transition: 0.3s; flex: 1; min-width: 100px;
+        }
+        .mode-btn.active { background: #bb86fc; color: #000; border-color: #bb86fc; font-weight: bold; }
+
+        /* Панели управления */
+        .control-panel { background: #1f1f1f; padding: 20px; border-radius: 12px; display: none; }
+        .control-panel.active { display: block; animation: slideIn 0.3s; }
+
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; color: #bbb; font-size: 0.9rem; }
+        
+        input, textarea {
+            width: 100%; padding: 12px; background: #333; border: 1px solid #444;
+            color: white; border-radius: 6px; font-size: 16px;
+        }
+        input:focus, textarea:focus { outline: 2px solid #bb86fc; border-color: transparent; }
+
+        .action-btn {
+            width: 100%; padding: 15px; background: #03dac6; color: #000; border: none;
+            border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer;
+            margin-top: 10px; transition: transform 0.1s;
+        }
+        .action-btn:active { transform: scale(0.98); }
+        .action-btn:disabled { background: #555; color: #888; cursor: not-allowed; }
+
+        /* Экран результата */
+        .result-display {
+            margin-top: 30px; text-align: center; min-height: 150px; display: flex;
+            flex-direction: column; justify-content: center; align-items: center;
+            background: #000; border-radius: 12px; border: 2px dashed #333; padding: 20px;
+            position: relative; overflow: hidden;
+        }
+        
+        .big-number { font-size: 5rem; font-weight: bold; color: #bb86fc; line-height: 1; transition: color 0.2s; }
+        .sub-text { color: #666; margin-top: 10px; }
+        .emoji-result { font-size: 6rem; display: block; transition: transform 0.1s; }
+
+        /* Эффект размытия при быстрой смене */
+        .blur-anim { filter: blur(2px); }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.3); color: #fff; } 100% { transform: scale(1); } }
+
+        .winner-anim { animation: pop 0.4s ease-out; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎲 Randomizer Pro</h1>
+    </header>
+
+    <div class="container">
+        <!-- ВЫБОР РЕЖИМА -->
+        <div class="modes">
+            <button class="mode-btn active" onclick="setMode('number')">Число</button>
+            <button class="mode-btn" onclick="setMode('dice')">Кубик</button>
+            <button class="mode-btn" onclick="setMode('coin')">Монетка</button>
+            <button class="mode-btn" onclick="setMode('list')">Список</button>
+        </div>
+
+        <!-- ПАНЕЛЬ: ЧИСЛО -->
+        <div id="panel-number" class="control-panel active">
+            <div class="input-group">
+                <label>От (минимум)</label>
+                <input type="number" id="num-min" value="1">
+            </div>
+            <div class="input-group">
+                <label>До (максимум)</label>
+                <input type="number" id="num-max" value="100">
+            </div>
+            <button class="action-btn" id="btn-number" onclick="startRoulette('number')">Сгенерировать</button>
+        </div>
+
+        <!-- ПАНЕЛЬ: КУБИК -->
+        <div id="panel-dice" class="control-panel">
+            <p style="text-align:center; margin-bottom:15px; color:#aaa;">Бросаем стандартный 6-гранный кубик</p>
+            <button class="action-btn" id="btn-dice" onclick="startRoulette('dice')">Бросить кубик</button>
+        </div>
+
+        <!-- ПАНЕЛЬ: МОНЕТКА -->
+        <div id="panel-coin" class="control-panel">
+            <p style="text-align:center; margin-bottom:15px; color:#aaa;">Орёл или решка?</p>
+            <button class="action-btn" id="btn-coin" onclick="startRoulette('coin')">Подбросить</button>
+        </div>
+
+        <!-- ПАНЕЛЬ: СПИСОК -->
+        <div id="panel-list" class="control-panel">
+            <div class="input-group">
+                <label>Введите варианты (каждый с новой строки):</label>
+                <textarea id="list-items" rows="5" placeholder="Пицца&#10;Суши&#10;Бургер"></textarea>
+            </div>
+            <button class="action-btn" id="btn-list" onclick="startRoulette('list')">Выбрать</button>
+        </div>
+
+        <!-- РЕЗУЛЬТАТ -->
+        <div class="result-display">
+            <div id="main-result" class="big-number">?</div>
+            <div id="sub-result" class="sub-text">Нажмите кнопку</div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'number';
+        let isSpinning = false; // Блокировка кнопки во время анимации
+
+        // Переключение вкладок
+        function setMode(mode) {
+            if(isSpinning) return; // Нельзя переключать во время прокрутки
+
+            currentMode = mode;
+            document.querySelectorAll('.control-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('panel-' + mode).classList.add('active');
+            
+            const btns = document.querySelectorAll('.mode-btn');
+            if(mode === 'number') btns[0].classList.add('active');
+            if(mode === 'dice') btns[1].classList.add('active');
+            if(mode === 'coin') btns[2].classList.add('active');
+            if(mode === 'list') btns[3].classList.add('active');
+
+            resetDisplay();
+        }
+
+        function resetDisplay() {
+            document.getElementById('main-result').innerText = "?";
+            document.getElementById('main-result').className = "big-number"; // Сброс анимаций
+            document.getElementById('sub-result').innerText = "Нажмите кнопку";
+        }
+
+        // --- ГЛАВНАЯ ФУНКЦИЯ ЗАПУСКА РУЛЕТКИ ---
+        function startRoulette(type) {
+            if (isSpinning) return;
+            
+            // Валидация
+            if (type === 'number') {
+                const min = parseInt(document.getElementById('num-min').value);
+                const max = parseInt(document.getElementById('num-max').value);
+                if (min >= max) { alert("Минимум должен быть меньше максимума!"); return; }
+            }
+            if (type === 'list') {
+                const items = document.getElementById('list-items').value.split('\n').filter(i => i.trim() !== "");
+                if (items.length < 2) { alert("Нужно минимум 2 варианта!"); return; }
+            }
+
+            isSpinning = true;
+            toggleButtons(true); // Блокируем кнопки
+            
+            const mainDisplay = document.getElementById('main-result');
+            const subDisplay = document.getElementById('sub-result');
+            
+            // Настройка параметров анимации
+            let duration = 2000; // Общее время работы (мс)
+            let intervalTime = 50; // Сначала быстро (50мс)
+            let elapsedTime = 0;
+            
+            // Эффект размытия
+            mainDisplay.classList.add('blur-anim');
+
+            // Таймер анимации
+            const timer = setInterval(() => {
+                elapsedTime += intervalTime;
+                
+                // Генерируем промежуточный случайный результат
+                const tempValue = getFakeValue(type);
+                updateDisplay(tempValue, type);
+
+                // Замедляем в конце
+                if (elapsedTime > duration * 0.7) {
+                    intervalTime += 20; // Увеличиваем задержку (замедляем)
+                }
+
+                // Остановка
+                if (elapsedTime >= duration) {
+                    clearInterval(timer);
+                    finishRoulette(type);
+                }
+            }, intervalTime);
+        }
+
+        // Получить случайное значение ТЕКУЩЕЕ (для анимации)
+        function getFakeValue(type) {
+            if (type === 'number') {
+                const min = parseInt(document.getElementById('num-min').value);
+                const max = parseInt(document.getElementById('num-max').value);
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+            if (type === 'dice') {
+                const dice = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+                return dice[Math.floor(Math.random() * dice.length)];
+            }
+            if (type === 'coin') {
+                return Math.random() < 0.5 ? "Орёл" : "Решка";
+            }
+            if (type === 'list') {
+                const items = document.getElementById('list-items').value.split('\n').filter(i => i.trim() !== "");
+                return items[Math.floor(Math.random() * items.length)];
+            }
+            return "?";
+        }
+
+        // Обновление экрана
+        function updateDisplay(value, type) {
+            const el = document.getElementById('main-result');
+            if (type === 'number' || type === 'coin') {
+                el.innerText = value;
+            } else if (type === 'dice' || type === 'list') {
+                // Для эмодзи и текста списка просто выводим
+                el.innerText = value;
+            }
+        }
+
+        // ФИНИШ: Показываем реальный результат
+        function finishRoulette(type) {
+            const el = document.getElementById('main-result');
+            const sub = document.getElementById('sub-result');
+            
+            // Финальный расчет
+            let finalVal = getFakeValue(type); // Функция та же, просто последний вызов
+            
+            // Убираем размытие
+            el.classList.remove('blur-anim');
+            
+            // Добавляем класс анимации победы
+            el.classList.remove('big-number'); // сброс
+            void el.offsetWidth; // trigger reflow
+            el.classList.add('big-number', 'winner-anim');
+            
+            el.innerText = finalVal;
+            
+            if (type === 'dice') {
+                // Дополнительно покажем число для кубика
+                const map = {'⚀':1, '⚁':2, '⚂':3, '⚃':4, '⚄':5, '⚅':6};
+                sub.innerText = `Выпало: ${map[finalVal]}`;
+            } else {
+                sub.innerText = "Результат";
+            }
+
+            isSpinning = false;
+            toggleButtons(false);
+        }
+
+        // Блокировка/Разблокировка кнопок
+        function toggleButtons(disabled) {
+            const btnId = 'btn-' + currentMode;
+            const btn = document.getElementById(btnId);
+            if(btn) btn.disabled = disabled;
+        }
+
+    </script>
+</body>
+</html>
